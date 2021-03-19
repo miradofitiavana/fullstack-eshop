@@ -59,12 +59,14 @@ export default {
     clientConfigs: {
       default: {
         httpEndpoint:
-          "http://localhost:3300/graphql"
+          process.env.API_URL_GRAPHQL
       }
     }
   },
 
   env: {
-    API_URL: process.env.API_URL
+    API_URL: process.env.API_URL,
+    API_SENDGRID: process.env.API_SENDGRID,
+    API_URL_GRAPHQL: process.env.API_URL_GRAPHQL
   }
 }

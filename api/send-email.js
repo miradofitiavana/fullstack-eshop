@@ -6,7 +6,7 @@ const app = express();
 app.use(bodyParser.json());
 
 sgMail.setApiKey(
-    "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"
+    process.env.API_SENDGRID
 );
 
 app.post('/', (req, res) => {
