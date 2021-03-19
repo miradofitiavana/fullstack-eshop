@@ -1,0 +1,32 @@
+npm create nuxt-app eshop
+
+create-nuxt-app v3.5.2
+✨  Generating Nuxt.js project in eshop
+? Project name: eshop
+? Programming language: JavaScript
+? Package manager: Npm
+? UI framework: Tailwind CSS
+? Nuxt.js modules:
+? Linting tools: (Press <space> to select, <a> to toggle all, <i> to invert selection)
+? Testing framework: Jest
+? Rendering mode: Universal (SSR / SSG)
+? Deployment target: Server (Node.js hosting)
+? Development tools: (Press <space> to select, <a> to toggle all, <i> to invert selection)
+? Continuous integration: None
+? Version control system: Git
+
+To get started:
+
+        cd eshop
+        npm run dev
+
+  To build & start for production:
+
+        cd eshop
+        npm run build
+        npm run start
+
+  To test:
+
+        cd eshop
+        npm run test
