@@ -121,7 +121,7 @@ export default {
     MAILCHIMP_LIST_ID: process.env.MAILCHIMP_LIST_ID,
   },
 
-  server: {
-    port: 8000 // default: 3000
-  }
+  // server: {
+  //   port: 8000 // default: 3000
+  // }
 }
