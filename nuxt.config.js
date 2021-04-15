@@ -65,12 +65,12 @@ export default {
     '@nuxtjs/fontawesome',
     //
     '@nuxtjs/date-fns',
+    '@nuxtjs/style-resources'
   ],
 
   modules: [
     '@nuxtjs/apollo',
     '@nuxt/http',
-    '@nuxtjs/style-resources'
   ],
 
   build: {
