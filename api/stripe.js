@@ -5,7 +5,7 @@ const app = express();
 app.use(express.static('.'));
 app.use(bodyParser.json())
 
-const YOUR_DOMAIN = 'https://fullstack-prime.herokuapp.com';
+const YOUR_DOMAIN = 'https://eshop-fullstack.herokuapp.com';
 
 app.post('/', (req, res) => {
     // stripe.customers.create({
