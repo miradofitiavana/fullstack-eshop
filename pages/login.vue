@@ -1,107 +1,97 @@
 <template>
-  <div class="flex flex-col pt-32 pb-32 bg-gray-100">
-    <div class="grid place-items-center mx-2 my-20 sm:my-auto">
-      <div
-        class="w-11/12 p-12 sm:w-8/12 md:w-6/12 lg:w-5/12 2xl:w-4/12 px-6 py-10 sm:px-10 sm:py-6 bg-white rounded-lg shadow-md lg:shadow-lg"
+  <main>
+    <div class="container login pt-4 pb-4">
+      <Title class="text-center">Se connecter</Title>
+
+      <validation-observer
+        v-slot="{ invalid }"
+        ref="subscribe"
+        tag="form"
+        class="w-full max-w-lg"
+        autocomplete="off"
+        @submit.prevent="!invalid && submitForm()"
       >
-        <h2
-          class="text-center font-semibold text-3xl lg:text-4xl text-gray-800"
-        >
-          Connexion
-        </h2>
-
-        <form class="mt-10" method="POST">
-          <label
-            for="email"
-            class="block text-xs font-semibold text-gray-600 uppercase"
-            >Email</label
-          >
-          <input
-            id="email"
-            type="email"
-            name="email"
-            placeholder="e-mail address"
-            autocomplete="email"
-            v-model="email"
-            class="block w-full py-3 px-1 mt-2 text-gray-600 appearance-none border-b-2 border-gray-100 focus:text-gray-800 focus:outline-none focus:border-gray-200"
-            required
+        <div class="container__input">
+          <FormField
+            inputType="email"
+            inputName="user_email"
+            inputLabel="Votre email"
+            :inputModel="user.email"
+            inputValidator="required|email"
+            @valueChanged="(payload) => (user.email = payload.inputValue)"
           />
-
-          <label
-            for="password"
-            class="block mt-2 text-xs font-semibold text-gray-600 uppercase"
-            >Mot de passe</label
-          >
-          <input
-            id="password"
-            type="password"
-            name="password"
-            placeholder="password"
-            autocomplete="current-password"
-            v-model="password"
-            class="block w-full py-3 px-1 mt-2 mb-4 text-gray-600 appearance-none border-b-2 border-gray-100 focus:text-gray-800 focus:outline-none focus:border-gray-200"
-            required
+          <FormField
+            inputType="password"
+            inputName="user_password"
+            inputLabel="Votre mot de passe"
+            :inputModel="user.password"
+            inputValidator="required|verify_password"
+            @valueChanged="(payload) => (user.password = payload.inputValue)"
           />
-          <Error
-            classError="mt-8"
-            :message="messageError"
-            v-show="messageError"
-          />
-
+        </div>
+        <div class="container__button">
+          <p class="text-sm">Mot de passe oublié ?</p>
           <Button
-            textBtn="Se connecter"
-            :funcBtn="login"
-            classBtn="w-full py-3 mt-10 bg-gray-800 rounded-sm font-medium text-white uppercase focus:outline-none hover:bg-gray-700 hover:shadow-none"
-          />
-        </form>
-      </div>
+            :disabled="invalid"
+            :btnFunc="submitForm"
+            type="submit"
+            btnClass="button-width button-shadow button-h-auto w-1/2 ml-auto block"
+            >Se connecter</Button
+          >
+        </div>
+        <div class="mt-4 font-semibold text-gray-700">
+          <p class="text-sm">
+            Vous n'avez pas encore de compte ?
+            <NuxtLink class="underline" to="/signup">Inscrivez-vous</NuxtLink>
+            gratuitement.
+          </p>
+        </div>
+        <transition name="fade">
+          <div class="container__error mb-4" v-if="errorMessage">
+            <!-- <Error :errorMessage="errorMessage" /> -->
+          </div>
+        </transition>
+      </validation-observer>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>
-import apiConfigs from "@/configs/api.config";
-import FormGroup from "@/components/ui/FormGroup";
-import Button from "@/components/ui/Button";
-import Error from "@/components/ui/Error";
+import { ValidationObserver } from "vee-validate";
 
 export default {
   components: {
-    FormGroup,
-    Button,
-    Error,
+    ValidationObserver,
   },
+
   data: function () {
     return {
-      email: "",
-      password: "",
-      messageError: "",
+      user: {
+        email: "",
+        password: "",
+      },
+      errorMessage: "",
+
+      /**
+       * action modal
+       */
+      showDialog: false,
     };
   },
+
   methods: {
-    login: function () {
-      console.log(this.email, this.password);
-      const body = {
-        password: this.password,
-        email: this.email,
-      };
-      // fetch(`${apiConfigs.apiURL}login`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-type": "Application/json",
-      //   },
-      //   body: JSON.stringify(),
-      // })
-      //   .then((res) => res.json())
-      this.$login(body)
+    submitForm() {
+      this.$login(this.user)
         .then((data) => {
-          console.log(data);
           if (!data.auth) {
-            this.messageError = data.message;
+            this.errorMessage = data.message;
           } else {
+            console.log(data);
             localStorage.setItem("token", data.token);
-            this.$store.commit('isAuth');
-            this.$router.push("/account");
+            localStorage.setItem("user", JSON.stringify(data.user));
+            this.$store.commit("auth/setAuth");
+            this.$store.commit("auth/setUser", data.user);
+            this.$router.push("/");
           }
         })
         .catch((err) => console.log(err));
@@ -111,4 +101,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.login {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+
+  form {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
 </style>

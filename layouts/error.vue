@@ -1,19 +1,15 @@
 <template>
-    <div>
-        <p v-if="error.statusCode === 404">
-            La page n'existe pas
-        </p>
-        <p v-else>
-            La site rencontre un problème
-        </p>
-    </div>
+  <main>
+    <p v-if="error.statusCode === 404">La page n'existe pas</p>
+    <p v-else>La site rencontre un problème</p>
+  </main>
 </template>
 
 <script>
-    export default {
-        props:['error'],
-        layout:'error'
-    }
+export default {
+  props: ["error"],
+  layout: "error",
+};
 </script>
 
 <style lang="scss" scoped>

@@ -1,0 +1,12 @@
+query GET_PRODUCTS {
+  products {
+    _id
+    title
+    price
+    imgUrl
+    categories {
+      _id
+      title
+    }
+  }
+}

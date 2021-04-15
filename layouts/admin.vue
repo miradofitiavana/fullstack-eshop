@@ -1,7 +1,9 @@
 <template>
-  <div class="min-h-screen">
-    <div class="sidebar">sidebar</div>
-    <div class="content">
+  <div class="flex h-screen bg-gray-200 font-roboto">
+    <BackSidebar />
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <BackHeader />
+
       <Nuxt />
     </div>
   </div>

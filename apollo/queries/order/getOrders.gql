@@ -1,0 +1,15 @@
+query GET_ORDERS {
+  orders {
+    _id
+    reference
+    total
+    user {
+      firstName
+      lastName
+    }
+    createdAt
+    updatedAt
+    sentAt
+    deliveredAt
+  }
+}

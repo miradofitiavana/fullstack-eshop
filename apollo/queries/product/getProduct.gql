@@ -1,0 +1,13 @@
+query GET_PRODUCT($id: ID!) {
+  product(id: $id) {
+    _id
+    title
+    price
+    description
+    imgUrl
+    categories {
+      _id
+      title
+    }
+  }
+}

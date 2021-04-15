@@ -1,88 +1,183 @@
 <template>
-  <div class="h-full pt-32 pb-32 bg-gray-100">
-    <div class="border-b-2 block md:flex">
-      <div class="w-full md:w-2/5 p-4 sm:p-6 lg:p-8 bg-white shadow-md">
-        <div class="flex justify-between">
-          <Title titleValue="Mon compte" />
-        </div>
+  <main>
+    <div class="container track pt-4 pb-4" v-if="user">
+      <Breadcrumb :list="breadcrumbs" />
+      <Title class="text-left">Bienvenue, {{ firstname }}</Title>
 
-        <p class="text-gray-600">Date enregistrement : {{ user.createdAt }}</p>
-        <p class="text-gray-600">Date de modification : {{ user.updatedAt }}</p>
-      </div>
-
-      <div class="w-full md:w-3/5 p-8 bg-white lg:ml-4 shadow-md">
-        <div class="rounded shadow p-6">
-          <div class="pb-6">
-            <label class="font-semibold text-gray-700 block pb-1"> Nom </label>
-            <p class="border-1 rounded-r px-4 py-2 w-full bg-gray-200">
-              {{ user.firstName }} {{ user.lastName }}
-            </p>
+      <validation-observer
+        v-slot="{ invalid }"
+        ref="subscribe"
+        tag="form"
+        autocomplete="off"
+        @submit.prevent="!invalid && submitForm()"
+      >
+        <div class="flex flex-wrap mt-12 -mx-1">
+          <div class="my-1 px-1 w-full md:w-1/2">
+            <FormField
+              class="no-margin"
+              inputType="text"
+              inputName="user_firstname"
+              inputLabel="Votre prénom"
+              :inputModel="user.firstName"
+              inputValidator="required"
+              @valueChanged="(payload) => (user.firstName = payload.inputValue)"
+            />
           </div>
-          <div class="pb-4">
-            <label class="font-semibold text-gray-700 block pb-1">
-              Email
-            </label>
-            <p class="border-1 rounded-r px-4 py-2 w-full bg-gray-200">
-              {{ user.email }}
-            </p>
+
+          <div class="my-1 px-1 w-full md:w-1/2">
+            <FormField
+              class="no-margin"
+              inputType="text"
+              inputName="user_lastname"
+              inputLabel="Votre nom"
+              :inputModel="user.lastName"
+              inputValidator="required"
+              @valueChanged="(payload) => (user.lastName = payload.inputValue)"
+            />
+          </div>
+
+          <div class="my-1 px-1 w-full md:w-1/2">
+            <FormField
+              class="no-margin"
+              inputType="email"
+              inputName="user_email"
+              inputLabel="Votre email"
+              :inputModel="user.email"
+              inputValidator="required|email"
+              @valueChanged="(payload) => (user.email = payload.inputValue)"
+            />
+          </div>
+
+          <div class="my-1 px-1 w-full md:w-1/2">
+            <FormField
+              class="no-margin"
+              inputType="text"
+              inputName="user_phone"
+              inputLabel="Votre téléphone"
+              :inputModel="user.phone"
+              inputValidator="required"
+              @valueChanged="(payload) => (user.phone = payload.inputValue)"
+            />
+          </div>
+
+          <div class="my-1 px-1 w-full md:w-1/2">
+            <FormField
+              class="no-margin"
+              inputType="text"
+              inputName="user_address"
+              inputLabel="Votre adresse"
+              :inputModel="user.address.address"
+              inputValidator="required"
+              @valueChanged="
+                (payload) => (user.address.address = payload.inputValue)
+              "
+            />
+          </div>
+
+          <div class="my-1 px-1 w-full md:w-1/2">
+            <FormField
+              class="no-margin"
+              inputType="text"
+              inputName="user_postalcode"
+              inputLabel="Code postal"
+              :inputModel="user.address.postal_code"
+              inputValidator="required"
+              @valueChanged="
+                (payload) => (user.address.postal_code = payload.inputValue)
+              "
+            />
+          </div>
+
+          <div class="my-1 px-1 w-full md:w-1/2">
+            <FormField
+              class="no-margin"
+              inputType="text"
+              inputName="user_city"
+              inputLabel="Ville"
+              :inputModel="user.address.city"
+              inputValidator="required"
+              @valueChanged="
+                (payload) => (user.address.city = payload.inputValue)
+              "
+            />
+          </div>
+          <div class="my-1 px-1 w-full md:w-1/2">
+            <FormField
+              class="no-margin"
+              inputType="text"
+              inputName="user_country"
+              inputLabel="Ville"
+              :inputModel="user.address.country"
+              inputValidator="required"
+              @valueChanged="
+                (payload) => (user.address.country = payload.inputValue)
+              "
+            />
+          </div>
+
+          <div class="my-1 px-1 w-full md:w-1/2"></div>
+          <div class="my-1 px-1 w-full md:w-1/2">
+            <Button
+              :disabled="invalid"
+              :btnFunc="submitForm"
+              type="submit"
+              btnClass="button-width button-shadow button-h-auto md:w-1/2 ml-auto block"
+              >Enregistrer les modifications</Button
+            >
           </div>
         </div>
-      </div>
-     
+      </validation-observer>
     </div>
-     <div>
-        <button v-if="isLogged" v-click="logout">Logout</button>
-      </div>
-  </div>
+  </main>
 </template>
 
 <script>
-import Title from "./../components/ui/Title";
+import { ValidationObserver } from "vee-validate";
 
 export default {
-  head: {
-    title: "About VueJS",
-    meta: [
-      {
-        hid: "description",
-        name: "description",
-        content: "My description meta data",
-      },
-    ],
+  components: {
+    ValidationObserver,
   },
+
   data: function () {
     return {
-      isLogged: false,
-      user: {},
+      user: null,
+      firstname: "",
+      breadcrumbs: [
+        { link: "/", anchor: "Home" },
+        { link: "#", anchor: "Mon compte" },
+      ],
     };
   },
-  components: {
-    Title,
-  },
-  middleware:'auth',
+
   methods: {
-    logout: function () {
-      localStorage.removeItem("token");
-      this.$store.commit("isAuth");
-      this.isLogged = false;
+    submitForm() {
+      const token = localStorage.getItem("token");
+      const decoded = this.$decodeJwt(token);
+      let body = {
+        firstName: this.user.firstName,
+        lastName: this.user.lastName,
+        phone: this.user.phone,
+        address: this.user.address,
+      };
+      this.$updateMe(decoded.id, token, body)
+        .then((response) => {
+          this.user = response.data;
+          this.firstname = response.data.firstName;
+          // console.log(data);
+          // this.$store.commit("toast/showToast");
+        })
+        .catch((err) => console.log(err));
     },
   },
-  beforeMount() {
+
+  mounted() {
     const token = localStorage.getItem("token");
-    if (token == null) {
-      this.$router.push("/login");
-      return;
-    }
-    const tokenDecode = this.$decodeJwt(token);
-    const id = tokenDecode.id;
-    if (!id) {
-      return;
-    }
-    this.$getMe(id, token)
+    const decoded = this.$decodeJwt(token);
+    this.$getMe(decoded.id, token)
       .then((data) => {
-        console.log(data);
-        this.isLogged = true;
         this.user = data;
+        this.firstname = data.firstName;
       })
       .catch((err) => console.log(err));
   },

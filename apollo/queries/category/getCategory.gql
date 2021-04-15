@@ -1,0 +1,6 @@
+query GET_CATEGORY($id: ID!) {
+  category(id: $id) {
+    _id
+    title
+  }
+}

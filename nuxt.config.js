@@ -1,5 +1,4 @@
 export default {
-  // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'eshop',
     htmlAttrs: {
@@ -12,61 +11,115 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ],
+    script: [
+      {
+        src: 'https://js.stripe.com/v3',
+        defer: true
+      }
     ]
   },
 
-  // Global CSS: https://go.nuxtjs.dev/config-css
+  loading: {
+    color: '#fed700',
+    height: '5px'
+  },
+
   css: [
-    "@/assets/css/style.css"
+    "vue-multiselect/dist/vue-multiselect.min.css",
+
+    "@/assets/scss/colors.scss",
+
+    "@/assets/css/style.css",
   ],
 
-  // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
+  styleResources: {
+    scss: ['./assets/scss/*.scss']
+  },
+
   plugins: [
-    '~/plugins/api.plugins.js',
-    '~/plugins/jwt.plugins.js'
+    '~/plugins/api/authenticate.plugins.js',
+    '~/plugins/api/categories.plugins.js',
+    '~/plugins/api/products.plugins.js',
+    '~/plugins/api/cart.plugins.js',
+    '~/plugins/api/users.plugins.js',
+    '~/plugins/api/paiement.plugins.js',
+    '~/plugins/api/orders.plugins.js',
+    //
+    '~/plugins/jwt.plugins',
+    //
+    '~/plugins/click-outside.plugins',
+    { src: '~/plugins/vee-validate', ssr: false },
+    { src: '~/plugins/vuex-persist', ssr: false },
   ],
 
-  // Auto import components: https://go.nuxtjs.dev/config-components
-  components: true,
+  components: [
+    '~/components/',
+    '~/components/back',
+    '~/components/front',
+    '~/components/ui',
+  ],
 
-  // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
+    '@nuxtjs/fontawesome',
+    //
+    '@nuxtjs/date-fns',
   ],
 
-  // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/apollo',
-    '@nuxt/http'
+    '@nuxt/http',
+    '@nuxtjs/style-resources'
   ],
 
-  // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     extend(config) {
       config.node = {
         fs: 'empty',
-        net: 'empty'
+        net: 'empty',
+        child_process: 'empty',
       }
     }
   },
 
   serverMiddleware: [
-    '~/api/send-email.js'
+    { path: "/api", handler: "~/api/newsletter.js" },
+    { path: "/api", handler: '~/api/stripe.js' },
+    { path: "/api", handler: '~/api/stripe-success.js' }
   ],
 
   apollo: {
     clientConfigs: {
       default: {
         httpEndpoint:
-          process.env.API_URL_GRAPHQL
-      }
+          "http://localhost:3300/graphql",
+        persisting: false,
+      },
     }
+  },
+
+  fontawesome: {
+    component: 'fa',
+    icons: {
+      solid: true,
+      brands: true
+    }
+  },
+
+  dateFns: {
+    locale: ['fr']
   },
 
   env: {
     API_URL: process.env.API_URL,
-    API_SENDGRID: process.env.API_SENDGRID,
-    API_URL_GRAPHQL: process.env.API_URL_GRAPHQL
+    STRIPE_PK: process.env.STRIPE_PK,
+    STRIPE_PUBLIC: process.env.STRIPE_PUBLIC,
+    MAILCHIMP_API_KEY: process.env.MAILCHIMP_API_KEY,
+    MAILCHIMP_LIST_ID: process.env.MAILCHIMP_LIST_ID,
+  },
+
+  server: {
+    port: 8000 // default: 3000
   }
 }
