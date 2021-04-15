@@ -23,7 +23,8 @@ body {
 }
 
 .container {
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
   padding-right: 15px;
   padding-left: 15px;
 }

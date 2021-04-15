@@ -1,12 +1,8 @@
 <template>
   <main>
     <div class="container mt-12">
-      <Title is="h2">a</Title>
-
-      <!-- <p v-if="$fetchState.pending">Récupération des montagnes... ⛰️</p>
-      <p v-else-if="$fetchState.error">Une erreur est survenue :(</p>
-      <ListCard :products="products" v-else></ListCard> -->
-      <ListCard :products="products"></ListCard>
+      <Title class="title-border">Les derniers produits</Title>
+      <ListCard :products="lastProduct"></ListCard>
     </div>
   </main>
 </template>
@@ -17,29 +13,36 @@ import GET_PRODUCTS from "~/apollo/queries/product/getProducts.gql";
 export default {
   data: function () {
     return {
-      products: null,
+      lastProduct: null,
     };
   },
 
   methods: {
-    refetch() {
-      this.$apollo.queries.products.refetch();
+    getDatas() {
+      const token = localStorage.getItem("token");
+      this.$getProducts(`?sort=createdAt&limit=5`, token)
+        .then((response) => {
+          this.lastProduct = response.data;
+        })
+        .catch((err) => {
+          this.errorMessage = err;
+        });
     },
   },
 
   mounted() {
-    this.refetch();
+    this.getDatas();
   },
 
-  apollo: {
-    $loadingKey: "loading",
-    products: {
-      prefetch: true,
-      query: GET_PRODUCTS,
-      update(data) {
-        console.log(data.products);
-        return data.products;
-      },
+  computed: {
+    wishlist() {
+      return this.$store.state.cart.wishlist;
+    },
+  },
+
+  watch: {
+    wishlist(newVal, oldVal) {
+      this.$store.commit("cart/setWishlist", newVal);
     },
   },
 };

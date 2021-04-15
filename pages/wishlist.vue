@@ -2,38 +2,12 @@
   <main>
     <div class="container track pt-4 pb-4">
       <Breadcrumb :list="breadcrumbs" />
-      <Title class="text-center">My wishlist on Electro </Title>
-      <p class="text-center mt-12">
-        To track your order please enter your Order ID in the box below and
-        press the "Track" button. This was given to you on your receipt and in
-        the confirmation email you should have received.
-      </p>
+      <Title class="text-center">Ma Wishlist</Title>
 
       <div class="track__container">
-        <!-- <validation-observer
-          v-slot="{ invalid }"
-          ref="subscribe"
-          tag="form"
-          class="max-w-2xl ml-auto mr-auto mt-10 flex"
-          autocomplete="off"
-          @submit.prevent="!invalid && submitForm()"
-        >
-          <FormField
-            class="no-margin mr-3"
-            inputType="text"
-            inputName="order_id"
-            inputLabel="Order ID"
-            :inputModel="order_id"
-            @valueChanged="(payload) => (order_id = payload.inputValue)"
-          />
-          <Button
-            :disabled="invalid"
-            :btnFunc="submitForm"
-            type="submit"
-            btnClass="button-width button-shadow button-h-auto w-1/2 ml-auto block"
-            >Track</Button
-          >
-        </validation-observer> -->
+        <div>
+          <ListCard :products="cart"></ListCard>
+        </div>
       </div>
     </div>
   </main>
@@ -51,7 +25,7 @@ export default {
     return {
       breadcrumbs: [
         { link: "/", anchor: "Home" },
-        { link: "#", anchor: "Wishlist" },
+        { link: "#", anchor: "Ma Wishlist" },
       ],
       order_id: "",
     };
@@ -60,6 +34,21 @@ export default {
   methods: {
     submitForm() {
       console.log("submitForm");
+    },
+  },
+
+  computed: {
+    cart() {
+      return this.$store.state.cart.cart;
+    },
+    wishlist() {
+      return this.$store.state.cart.wishlist;
+    },
+  },
+
+  watch: {
+    wishlist(newVal, oldVal) {
+      this.$store.commit("cart/setWishlist", newVal);
     },
   },
 };

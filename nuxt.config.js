@@ -86,14 +86,15 @@ export default {
   serverMiddleware: [
     { path: "/api", handler: "~/api/newsletter.js" },
     { path: "/api", handler: '~/api/stripe.js' },
-    { path: "/api", handler: '~/api/stripe-success.js' }
+    { path: "/api", handler: '~/api/stripe-success.js' },
+    { path: "/api", handler: '~/api/send-mail.js' }
   ],
 
   apollo: {
     clientConfigs: {
       default: {
         httpEndpoint:
-          "http://localhost:3300/graphql",
+          "https://fullstack-prime.herokuapp.com/graphql",
         persisting: false,
       },
     }
@@ -113,6 +114,7 @@ export default {
 
   env: {
     API_URL: process.env.API_URL,
+    SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
     STRIPE_PK: process.env.STRIPE_PK,
     STRIPE_PUBLIC: process.env.STRIPE_PUBLIC,
     MAILCHIMP_API_KEY: process.env.MAILCHIMP_API_KEY,

@@ -4,16 +4,20 @@
       <Breadcrumb :list="breadcrumbs" />
       <Title class="text-center">Commande enregistrée</Title>
 
-      <div class="block text-center mt-5 text-6xl emoji">
-        <fa icon="sad-tear" />
+      <div class="block text-center mt-5 text-6xl">
+        <fa icon="check-circle" />
       </div>
 
       <p class="text-center mt-12 text-lg">
-        Votre commande n'a pas pu être enregistrée.
+        Votre commande a été enregistrée avec succès.
       </p>
       <p class="text-center text-lg">
-        Merci de réessayer ou nous contacter en cas de difficultés.
+        Vous allez recevoir un email de confirmation, pensez à vérifier vos
+        courriers indésirables.
       </p>
+      <NuxtLink to="/" class="text-center block mt-16 text-xl font-medium"
+        >Retourner à la page d'accueil</NuxtLink
+      >
     </div>
   </main>
 </template>
@@ -56,7 +60,20 @@ export default {
 
           this.$saveOrder(body)
             .then((response) => {
-              console.log(response);
+              if (!response.already_saved) {
+                this.$clearCart();
+                fetch("/api/send-email", {
+                  method: "POST",
+                  headers: {
+                    "Content-type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    to: response.user.email,
+                  }),
+                })
+                  .then((data) => console.log(data))
+                  .catch((err) => console.log(err));
+              }
             })
             .catch((error) => {
               console.log(err);

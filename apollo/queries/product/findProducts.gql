@@ -1,5 +1,5 @@
-query GET_PRODUCTS($category: String) {
-  products(category: $category) {
+query FIND_PRODUCTS($searchKey: String) {
+  findProducts(searchKey: $searchKey) {
     _id
     title
     price

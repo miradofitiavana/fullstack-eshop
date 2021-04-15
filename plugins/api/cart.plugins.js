@@ -71,6 +71,7 @@ export default ({ app, store }, inject) => {
                 products.push(product);
             }
             localStorage.setItem("wishlist", JSON.stringify(products));
+            store.commit("cart/setWishlist", products);
         }),
 
         inject('isInWishlist', (product) => {

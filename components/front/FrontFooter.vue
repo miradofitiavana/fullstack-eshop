@@ -1,5 +1,5 @@
 <template>
-     <footer class="footer">
+  <footer class="footer">
     <div class="footer__top">
       <div class="container">
         <div class="grid">
@@ -23,6 +23,7 @@
           <div
             class="col-start-1 lg:col-start-2 top__right self-center w-10/12 ml-auto"
           >
+            <NewsletterForm />
             <!-- <FormSearchSubscribe /> -->
           </div>
         </div>
@@ -68,9 +69,7 @@
 </template>
 
 <script>
-    export default {
-        
-    }
+export default {};
 </script>
 
 <style lang="scss" scoped>
@@ -78,7 +77,7 @@
   &__top {
     padding-top: 1rem;
     padding-bottom: 1rem;
-    background-color:  var(--primary-color);
+    background-color: var(--primary-color);
 
     .top {
       &__left {

@@ -91,10 +91,10 @@ export default {
               user: `${item.user.firstName} ${item.user.lastName}`,
               createdAt: item.createdAt,
               status: item.deliveredAt
-                ? "Livré"
+                ? "Livrée"
                 : item.sentAt
-                ? "Expédié"
-                : "En cours de traitement",
+                ? "Expédiée"
+                : "En cours",
               updatedAt: item.updatedAt,
             };
           });

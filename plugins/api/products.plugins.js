@@ -1,15 +1,24 @@
 export default ({ app }, inject) => {
-    inject('createProduct', (body, token) => {
-        return fetch(`${process.env.API_URL}/products`, {
-            method: "POST",
+    inject('getProducts', (params = '') => {
+        return fetch(`${process.env.API_URL}/products${params}`, {
             headers: {
                 "Content-type": "Application/json",
-                Authorization: token
             },
-            body: JSON.stringify(body)
         })
             .then((res) => res.json())
     }),
+
+        inject('createProduct', (body, token) => {
+            return fetch(`${process.env.API_URL}/products`, {
+                method: "POST",
+                headers: {
+                    "Content-type": "Application/json",
+                    Authorization: token
+                },
+                body: JSON.stringify(body)
+            })
+                .then((res) => res.json())
+        }),
         inject('updateProduct', (id, body, token) => {
             return fetch(`${process.env.API_URL}/product/${id}`, {
                 method: "PUT",

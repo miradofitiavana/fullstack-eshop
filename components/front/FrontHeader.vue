@@ -12,12 +12,6 @@
           <div class="topbar__right ml-auto">
             <client-only>
               <ul class="topmenu">
-                <li class="topmenu__item">
-                  <fa icon="truck" />
-                  <NuxtLink to="/track-orders" class="topmenu__link">
-                    Suivre mes commandes
-                  </NuxtLink>
-                </li>
                 <li v-if="!isLoggedIn" class="topmenu__item">
                   <fa icon="user" />
                   <NuxtLink to="/signup" class="topmenu__link">
@@ -29,6 +23,12 @@
                   </NuxtLink>
                 </li>
                 <template v-else>
+                  <li class="topmenu__item">
+                    <fa icon="truck" />
+                    <NuxtLink to="/track-orders" class="topmenu__link">
+                      Suivre mes commandes
+                    </NuxtLink>
+                  </li>
                   <li class="topmenu__item">
                     <fa icon="user" />
                     <NuxtLink to="/account" class="topmenu__link">
@@ -110,7 +110,9 @@
               <!-- <div class="shop">Voir par Catégorie</div> -->
               <HeaderDropdown title="Voir par Catégorie" :items="categories">
                 <template v-slot:itemValue="slotProps">
-                  {{ slotProps.item.title }}
+                  <NuxtLink :to="`/eshop/${slotProps.item._id}`">
+                    {{ slotProps.item.title }}
+                  </NuxtLink>
                 </template>
               </HeaderDropdown>
             </div>
@@ -123,10 +125,16 @@
             </ul>
           </div>
           <div class="bottom__search">
-            <FrontFormUnique
-              placeholder="Rechercher un article"
-              icon="search"
-            />
+            <form action="">
+              <div class="search__group">
+                <input
+                  type="text"
+                  class="search__input"
+                  placeholder="Rechercher un produit"
+                  v-model="searchQuery"
+                />
+              </div>
+            </form>
           </div>
           <div class="bottom__logo">
             <Logo />
@@ -178,6 +186,8 @@ export default {
       fixed: false,
       categories: [],
       loading: 0,
+
+      searchQuery: "",
     };
   },
 
@@ -195,6 +205,12 @@ export default {
 
     handleScroll() {
       this.fixed = window.scrollY > 20;
+    },
+
+    logout: function () {
+      localStorage.removeItem("token");
+      this.$store.commit("auth/unsetAuth");
+      this.$store.commit("auth/unsetUser");
     },
   },
 
@@ -221,10 +237,75 @@ export default {
       return this.$store.state.cart.cartCount;
     },
   },
+
+  watch: {
+    searchQuery: function (value, oldValue) {
+      this.$store.commit("search/setQuery", value);
+      if (
+        (this.$router.currentRoute.path == "/search" &&
+          value != this.$router.currentRoute.query.q) ||
+        this.$router.currentRoute.path != "/search"
+      ) {
+        this.$router.push({ path: "/search", query: { q: value } });
+      }
+    },
+  },
+
+  mounted() {
+    if (this.$router.currentRoute.path == "/search") {
+      this.searchQuery = this.$router.currentRoute.query.q;
+      console.log(this.searchQuery);
+      this.$store.commit("search/setQuery", this.searchQuery);
+    }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
+.search {
+  &__group {
+  }
+
+  &__input {
+    border-radius: 6.1875rem;
+    height: 2.56288rem;
+    padding-left: 1.5rem;
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    padding-right: 1rem;
+    display: inline-block;
+    border: 0;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--gris-6);
+    background-color: var(--white);
+    background-clip: padding-box;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    width: 100%;
+
+    &:focus {
+      outline: 0;
+      border-width: 2px;
+      border-color: var(--black);
+      color: var(--gris-9);
+    }
+  }
+
+  /* &__button {
+    margin-left: -6px;
+    width: 25%;
+    border-top-right-radius: 6.1875rem !important;
+    border-bottom-right-radius: 6.1875rem !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+
+    svg {
+      color: var(--white);
+      font-size: 20px;
+    }
+  } */
+}
+
 .header {
   flex: 0 0 auto;
 

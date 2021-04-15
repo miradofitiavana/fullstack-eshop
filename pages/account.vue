@@ -157,6 +157,7 @@ export default {
       let body = {
         firstName: this.user.firstName,
         lastName: this.user.lastName,
+        email: this.user.email,
         phone: this.user.phone,
         address: this.user.address,
       };

@@ -14,6 +14,9 @@
       <p class="text-center text-lg">
         Merci de réessayer ou nous contacter en cas de difficultés.
       </p>
+      <NuxtLink to="/" class="text-center block mt-16 text-xl font-medium"
+        >Retourner à la page d'accueil</NuxtLink
+      >
     </div>
   </main>
 </template>

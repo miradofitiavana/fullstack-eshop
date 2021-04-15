@@ -34,7 +34,7 @@
           <div class="wishlist">
             <Button class="button-unstyled" :btnFunc="addToWishlist">
               <fa icon="heart" />
-              <!-- <span class="pl-1">{{ $isInWishlist(product) }}</span> -->
+              <span class="pl-1">{{ isWished }}</span>
             </Button>
           </div>
         </div>
@@ -64,6 +64,20 @@ export default {
 
     addToWishlist() {
       this.$toggleWishlist(this.product);
+    },
+  },
+
+  computed: {
+    wishlist() {
+      return this.$store.state.cart.wishlist;
+    },
+  },
+
+  watch: {
+    product() {
+      const isPresent = this.wishlist.map((e) => e._id).indexOf(this.product._id);
+
+      if (isPresent !== -1) this.isWished = "Enlever de la Wishlist";
     },
   },
 };

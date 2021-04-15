@@ -2,38 +2,25 @@
   <main>
     <div class="container track pt-4 pb-4">
       <Breadcrumb :list="breadcrumbs" />
-      <Title class="text-center">Track your Order </Title>
-      <p class="text-center mt-12">
-        To track your order please enter your Order ID in the box below and
-        press the "Track" button. This was given to you on your receipt and in
-        the confirmation email you should have received.
-      </p>
+      <Title class="text-center">Suivre mes commandes</Title>
 
-      <div class="track__container">
-        <validation-observer
-          v-slot="{ invalid }"
-          ref="subscribe"
-          tag="form"
-          class="max-w-2xl ml-auto mr-auto mt-10 flex"
-          autocomplete="off"
-          @submit.prevent="!invalid && submitForm()"
-        >
-          <FormField
-            class="no-margin mr-3"
-            inputType="text"
-            inputName="order_id"
-            inputLabel="Order ID"
-            :inputModel="order_id"
-            @valueChanged="(payload) => (order_id = payload.inputValue)"
-          />
-          <Button
-            :disabled="invalid"
-            :btnFunc="submitForm"
-            type="submit"
-            btnClass="button-width button-shadow button-h-auto w-1/2 ml-auto block"
-            >Track</Button
-          >
-        </validation-observer>
+      <div class="mt-5">
+        <Table :columns="columns" :datas="dataTable">
+          <template v-slot:colValue="slotProps">
+            <div
+              class="product__categories"
+              v-if="['createdAt', 'updatedAt'].includes(slotProps.item.key)"
+            >
+              {{ getDateFr(slotProps.item.data) }}
+            </div>
+            <div v-else-if="slotProps.item.key == 'total'">
+              {{ slotProps.item.data }}&euro;
+            </div>
+            <span v-else>
+              {{ slotProps.item.data }}
+            </span>
+          </template>
+        </Table>
       </div>
     </div>
   </main>
@@ -41,26 +28,79 @@
 
 <script>
 import { ValidationObserver } from "vee-validate";
+import fr from "date-fns/locale/fr";
 
 export default {
   components: {
     ValidationObserver,
   },
 
+  middleware: ["auth"],
+
   data: function () {
     return {
       breadcrumbs: [
         { link: "/", anchor: "Home" },
-        { link: "#", anchor: "Track order" },
+        { link: "#", anchor: "Suivre mes commandes" },
       ],
       order_id: "",
+
+      //table
+      columns: {
+        createdAt: "Date de la commande",
+        updatedAt: "Dernière modification",
+        total: "Montant",
+        status: "Statut",
+      },
+      dataTable: [],
+      actionsTable: [
+        {
+          action: "edit",
+          icon: "edit",
+        },
+      ],
     };
   },
 
   methods: {
-    submitForm() {
-      console.log("submitForm");
+    getDateFr(date) {
+      return this.$dateFns.format(new Date(date), "DD MMMM YYYY à HH:mm", {
+        locale: fr,
+      });
     },
+
+    getDatas() {
+      const token = localStorage.getItem("token");
+      const decoded = this.$decodeJwt(token);
+      this.$getMyOrders(decoded.id, token)
+        .then((response) => {
+          let orders = response.data;
+          console.log(orders);
+          this.dataTable = orders.map((item) => {
+            return {
+              _id: item._id,
+              reference: item.reference,
+              total: item.total,
+              createdAt: item.createdAt,
+              status: item.deliveredAt
+                ? "Livrée"
+                : item.sentAt
+                ? "Expédiée"
+                : "En cours",
+              updatedAt: item.updatedAt,
+            };
+          });
+
+          console.log(this.dataTable);
+        })
+        .catch((err) => {
+          this.errorMessage = err;
+        });
+    },
+  },
+
+  beforeMount() {
+    this.getDatas();
   },
 };
 </script>

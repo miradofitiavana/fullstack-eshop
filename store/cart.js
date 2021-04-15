@@ -2,6 +2,7 @@ export const state = () => ({
     cartCount: 0,
     cartAmount: 0,
     cart: [],
+    wishlist: []
 });
 
 export const mutations = {
@@ -13,5 +14,8 @@ export const mutations = {
     },
     setCart(state, payload) {
         state.cart = payload;
-    }
+    },
+    setWishlist(state, payload) {
+        state.wishlist = payload;
+    },
 }

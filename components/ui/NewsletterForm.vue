@@ -1,7 +1,7 @@
 <template>
   <div class="newsletter-form-container">
     <div class="newsletter-form">
-      <div class="newsletter-form__input-group input-group">
+      <div class="newsletter-form__input-group input-group flex">
         <input
           id="email"
           v-model="form.email"
@@ -12,15 +12,14 @@
           aria-label="Email"
           aria-describedby="button-newsletter"
         />
-        <button
-          @click.prevent="validateForm"
+
+        <Button
+          class="ml-3"
           :class="{ disabled: form.sending }"
-          class="btn btn-primary"
-          id="button-newsletter"
-          type="submit"
+          :btnFunc="validateForm"
         >
-          Submit
-        </button>
+          Souscrire
+        </Button>
       </div>
       <transition name="status">
         <div
@@ -94,7 +93,7 @@ export default {
 
     subscribe() {
       this.form.sending = true;
-      this.form.errors.push("Sending...");
+      this.form.errors.push("En cours d'enregistrement...");
 
       //   try {
       fetch("/api/subscribe", {
@@ -107,9 +106,19 @@ export default {
         }),
       })
         .then((response) => {
+          // this.from.errors = [];
+          this.form.success = true;
           console.log(response);
+          if (response.statusCode == 400) {
+            this.form.errors[0] = err.title;
+          } else {
+            this.form.errors[0] = `Votre premier newsletter arrivera bientôt!`;
+          }
+          this.resetFormEmail();
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          this.form.errors[0] = err.title;
+        });
       //   } catch (error) {
       //     this.form.errors.push(
       //       `Error (${error.response.data.status}): ${error.response.data.title}`
@@ -123,13 +132,30 @@ export default {
 };
 </script>
 
-<style scoped>
-.newsletter-form-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
+<style lang="scss" scoped>
+input {
+  border-radius: 6.1875rem;
+  height: 2.56288rem;
+  padding-left: 1.5rem;
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+  padding-right: 1rem;
+  display: inline-block;
+  border: 0;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--gris-6);
+  background-color: var(--white);
+  background-clip: padding-box;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 100%;
+
+  &:focus {
+    outline: 0;
+    border-width: 2px;
+    border-color: var(--black);
+    color: var(--gris-9);
+  }
 }
 
 .newsletter-form {
